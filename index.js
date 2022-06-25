@@ -9,7 +9,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kqqwx.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.anvyz.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -19,8 +19,12 @@ async function run() {
         await client.connect();
         const productCollection = client.db('little-leaf').collection('products');
 
-
-
+        app.get('/product', async (req, res) => {
+            const query = {};
+            const cursor = productCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        });
 
     }
     finally {
@@ -31,9 +35,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('Hello from products place!');
+    res.send('Hello from Little Leaf!');
 })
 
 app.listen(port, () => {
-    console.log(`products place App listening on port ${port}`)
+    console.log(`Little Leaf listening on port ${port}`)
 })
