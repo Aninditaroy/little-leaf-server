@@ -18,7 +18,9 @@ async function run() {
     try {
         await client.connect();
         const productCollection = client.db('little-leaf').collection('products');
+        const cartCollection = client.db('little-leaf').collection('carts');
 
+        // get api for products
         app.get('/product', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
@@ -26,11 +28,19 @@ async function run() {
             res.send(products);
         });
 
+        // get api with id for product
         app.get('/product/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const product = await productCollection.findOne(query);
             res.send(product);
+        })
+
+        // post api for cart  //http://localhost:5000/cart
+        app.post('/cart', async (req, res) => {
+            const cart = req.body;
+            const result = await cartCollection.insertOne(cart);
+            res.send(result);
         })
 
     }
