@@ -36,14 +36,6 @@ async function run() {
             res.send(product);
         })
 
-        // get api for carts
-        app.get('/carts', async (req, res) => {
-            const query = {};
-            const cursor = cartCollection.find(query);
-            const carts = await cursor.toArray();
-            res.send(carts);
-        });
-
         // post api for cart  //http://localhost:5000/cart
         app.post('/cart', async (req, res) => {
             const cart = req.body;
