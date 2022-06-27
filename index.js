@@ -36,6 +36,13 @@ async function run() {
             res.send(product);
         })
 
+        // post api for cart  //http://localhost:5000/cart
+        app.post('/cart', async (req, res) => {
+            const cart = req.body;
+            const result = await cartCollection.insertOne(cart);
+            res.send(result);
+        })
+
         // get api for carts
         app.get('/carts', async (req, res) => {
             const query = {};
@@ -43,13 +50,6 @@ async function run() {
             const carts = await cursor.toArray();
             res.send(carts);
         });
-
-        // post api for cart  //http://localhost:5000/cart
-        app.post('/cart', async (req, res) => {
-            const cart = req.body;
-            const result = await cartCollection.insertOne(cart);
-            res.send(result);
-        })
 
     }
     finally {
