@@ -43,6 +43,25 @@ async function run() {
             res.send(result);
         })
 
+
+        //for update quantity in cart //http://localhost:5000/carts/:id
+        app.patch('/carts/:id', async (req, res) => {
+            const id = req.params.id;
+            const cart = req.body
+            console.log(cart)
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    quantity: cart.quantity,
+
+                }
+            };
+            const updatedOrder = await cartCollection.updateOne(filter, updateDoc)
+            res.send(updateDoc)
+
+        })
+
+
         // get api for carts
         app.get('/carts', async (req, res) => {
             const query = {};
@@ -50,6 +69,8 @@ async function run() {
             const carts = await cursor.toArray();
             res.send(carts);
         });
+
+
 
     }
     finally {
