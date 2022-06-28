@@ -70,6 +70,16 @@ async function run() {
             res.send(carts);
         });
 
+        //cancel or delete cart order
+        //http://localhost:5000/carts/:id
+
+        app.delete('/carts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
+            res.send(result);
+        })
+
 
 
     }
