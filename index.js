@@ -8,6 +8,12 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // middleware
 app.use(cors());
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.anvyz.mongodb.net/?retryWrites=true&w=majority`;
@@ -16,22 +22,17 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
-    console.log("AUTH", authHeader)
     if (!authHeader) {
-        return res.status(401).send({ message: 'Unauthorized access' })
+        return res.status(401).send({ message: 'Unauthorized access' });
     }
     const token = authHeader.split(' ')[1];
-    // console.log("Token holo", token)
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
         if (err) {
             return res.status(403).send({ message: 'Forbidden access' })
-
         }
-        req.decoded = decoded
-        console.log(req.decoded)
+        req.decoded = decoded;
         next();
-    });
-
+    })
 }
 
 
@@ -57,24 +58,27 @@ async function run() {
         }
 
 
-        // get all users
-        app.get('/user', verifyJWT, async (req, res) => {
-            const users = await userCollection.find().toArray();
-            res.send(users);
-        })
+        // // get all users
+        // app.get('/user', verifyJWT, async (req, res) => {
+        //     const users = await userCollection.find().toArray();
+        //     res.send(users);
+        // })
 
-        // get admin
-        app.get('/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const user = await userCollection.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
-            res.send({ admin: isAdmin })
-        })
+        // // get admin
+        // app.get('/admin/:email', async (req, res) => {
+        //     const email = req.params.email;
+        //     console.log('got this email', email)
+        //     const user = await userCollection.findOne({ email: email });
+        //     const isAdmin = user.role === 'admin';
+        //     res.send({ admin: isAdmin })
+        // })
 
         // put user by email endpoint
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
+            console.log('got this email', email)
             const user = req.body;
+            console.log('got this user', user)
             const filter = { email: email };
             const options = { upsert: true };
             const updateDoc = {
