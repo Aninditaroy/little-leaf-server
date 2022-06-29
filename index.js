@@ -40,6 +40,21 @@ async function run() {
         await client.connect();
         const productCollection = client.db('little-leaf').collection('products');
         const cartCollection = client.db('little-leaf').collection('carts');
+        const userCollection = client.db('little-leaf').collection('users');
+
+        // put user by email endpoint
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            res.send({ result, token });
+        })
 
         // get api for products
         app.get('/product', async (req, res) => {
@@ -100,6 +115,8 @@ async function run() {
             const result = await cartCollection.deleteOne(query);
             res.send(result);
         })
+
+
 
 
 
