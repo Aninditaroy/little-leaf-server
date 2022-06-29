@@ -42,6 +42,20 @@ async function run() {
         const cartCollection = client.db('little-leaf').collection('carts');
         const userCollection = client.db('little-leaf').collection('users');
 
+        // get all users
+        app.get('/user', verifyJWT, async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users);
+        })
+
+        // get admin
+        app.get('/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin })
+        })
+
         // put user by email endpoint
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
