@@ -57,6 +57,14 @@ async function run() {
             }
         }
 
+        //find all admin 
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email })
+            const isAdmin = user.role === 'admin'
+            res.send({ admin: isAdmin })
+
+        })
 
         // get all users
         app.get('/users', async (req, res) => {
@@ -64,17 +72,17 @@ async function run() {
             res.send(users);
         })
 
-        // get admin
-        app.get('/user/:email', async (req, res) => {
-            const email = req.params.email;
-            console.log('got this email', email)
-            const user = await userCollection.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
-            res.send({ admin: isAdmin })
-        })
+        // // get admin
+        // app.get('/user/:email', async (req, res) => {
+        //     const email = req.params.email;
+        //     console.log('got this email', email)
+        //     const user = await userCollection.findOne({ email: email });
+        //     const isAdmin = user.role === 'admin';
+        //     res.send({ admin: isAdmin })
+        // })
 
         // put user by email endpoint
-        app.put('/user/:email', async (req, res) => {
+        app.put('/users/:email', async (req, res) => {
             const email = req.params.email;
             console.log('got this email', email)
             const user = req.body;
@@ -90,21 +98,21 @@ async function run() {
         })
 
 
-        // //make an user admin and check admin
+        //make an user admin and check admin
 
-        // app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
-        //     const email = req.params.email;
+        app.put('/users/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
+            const email = req.params.email;
 
-        //     const filter = { email: email };
-        //     const updateDoc = {
-        //         // paid: true,
-        //         // transactionId: payment.transectionId,
-        //         $set: { role: 'admin' }
-        //     };
-        //     const result = await userCollection.updateOne(filter, updateDoc);
-        //     res.send(result)
+            const filter = { email: email };
+            const updateDoc = {
+                // paid: true,
+                // transactionId: payment.transectionId,
+                $set: { role: 'admin' }
+            };
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send(result)
 
-        // })
+        })
 
         //Admin Works
         app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
