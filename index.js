@@ -90,6 +90,22 @@ async function run() {
         })
 
 
+        // //make an user admin and check admin
+
+        // app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
+        //     const email = req.params.email;
+
+        //     const filter = { email: email };
+        //     const updateDoc = {
+        //         // paid: true,
+        //         // transactionId: payment.transectionId,
+        //         $set: { role: 'admin' }
+        //     };
+        //     const result = await userCollection.updateOne(filter, updateDoc);
+        //     res.send(result)
+
+        // })
+
         //Admin Works
         app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
             const product = req.body;
