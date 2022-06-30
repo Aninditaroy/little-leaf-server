@@ -58,20 +58,20 @@ async function run() {
         }
 
 
-        // // get all users
-        // app.get('/user', verifyJWT, async (req, res) => {
-        //     const users = await userCollection.find().toArray();
-        //     res.send(users);
-        // })
+        // get all users
+        app.get('/users', async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users);
+        })
 
-        // // get admin
-        // app.get('/admin/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     console.log('got this email', email)
-        //     const user = await userCollection.findOne({ email: email });
-        //     const isAdmin = user.role === 'admin';
-        //     res.send({ admin: isAdmin })
-        // })
+        // get admin
+        app.get('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            console.log('got this email', email)
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin })
+        })
 
         // put user by email endpoint
         app.put('/user/:email', async (req, res) => {
