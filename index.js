@@ -22,10 +22,12 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
+    console.log('auth header hellooo', authHeader);
     if (!authHeader) {
         return res.status(401).send({ message: 'Unauthorized access' });
     }
     const token = authHeader.split(' ')[1];
+    console.log('hello token', token)
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
         if (err) {
             return res.status(403).send({ message: 'Forbidden access' })
@@ -60,17 +62,12 @@ async function run() {
         //find all admin 
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
-            const user = await userCollection.findOne({ email: email })
-            const isAdmin = user.role === 'admin'
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
             res.send({ admin: isAdmin })
-
         })
 
-        // get all users
-        app.get('/users', async (req, res) => {
-            const users = await userCollection.find().toArray();
-            res.send(users);
-        })
+
 
         // // get admin
         // app.get('/user/:email', async (req, res) => {
@@ -102,7 +99,6 @@ async function run() {
 
         app.put('/users/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
-
             const filter = { email: email };
             const updateDoc = {
                 // paid: true,
@@ -114,15 +110,12 @@ async function run() {
 
         })
 
-        //Admin Works
-        app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
-            const product = req.body;
-            const result = await productCollection.insertOne(product);
-            res.send(result);
+
+        // get all users
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users);
         })
-        //Admin Works end
-
-
 
         // get api for products
         app.get('/product', async (req, res) => {
@@ -147,6 +140,13 @@ async function run() {
             res.send(result);
         })
 
+        //Admin Works add new product
+        app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
+            const product = req.body;
+            console.log(product)
+            const result = await productCollection.insertOne(product);
+            res.send(result);
+        })
 
         //for update quantity in cart //http://localhost:5000/carts/:id
         app.patch('/carts/:id', async (req, res) => {
