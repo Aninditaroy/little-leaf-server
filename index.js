@@ -141,12 +141,27 @@ async function run() {
         })
 
         //Admin Works add new product
+
         app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
             const product = req.body;
             console.log(product)
             const result = await productCollection.insertOne(product);
             res.send(result);
         })
+
+        //cancel or delete products from manage product
+        //http://localhost:5000/product/:id
+
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
+
+
+
+
 
         //for update quantity in cart //http://localhost:5000/carts/:id
         app.patch('/carts/:id', async (req, res) => {
