@@ -117,6 +117,7 @@ async function run() {
             res.send(users);
         })
 
+
         // get api for products
         app.get('/product', async (req, res) => {
             const query = {};
@@ -124,6 +125,7 @@ async function run() {
             const products = await cursor.toArray();
             res.send(products);
         });
+
 
         // get api with id for product
         app.get('/product/:id', async (req, res) => {
