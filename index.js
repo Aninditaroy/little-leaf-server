@@ -22,12 +22,12 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
-    console.log('auth header hellooo', authHeader);
+    // console.log('auth header hellooo', authHeader);
     if (!authHeader) {
         return res.status(401).send({ message: 'Unauthorized access' });
     }
     const token = authHeader.split(' ')[1];
-    console.log('hello token', token)
+    // console.log('hello token', token)
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
         if (err) {
             return res.status(403).send({ message: 'Forbidden access' })
@@ -81,9 +81,9 @@ async function run() {
         // put user by email endpoint
         app.put('/users/:email', async (req, res) => {
             const email = req.params.email;
-            console.log('got this email', email)
+            // console.log('got this email', email)
             const user = req.body;
-            console.log('got this user', user)
+            // console.log('got this user', user)
             const filter = { email: email };
             const options = { upsert: true };
             const updateDoc = {
@@ -144,7 +144,7 @@ async function run() {
 
         app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
             const product = req.body;
-            console.log(product)
+            // console.log(product)
             const result = await productCollection.insertOne(product);
             res.send(result);
         })
@@ -159,6 +159,30 @@ async function run() {
             res.send(result);
         })
 
+        //update products from manage product
+        //http://localhost:5000/product/:id
+        app.patch('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedProduct = req.body;
+            // console.log(updatedProduct)
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updateDoc = {
+                $set: {
+                    plantName: updatedProduct.plantName,
+                    imageUrl: updatedProduct.imageUrl,
+                    imageAlt: updatedProduct.imageAlt,
+                    categories: updatedProduct.categories,
+                    inStock: updatedProduct.inStock,
+                    price: updatedProduct.price,
+                    description: updatedProduct.description,
+                },
+            };
+            const result = await productCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
+
 
 
 
@@ -167,7 +191,7 @@ async function run() {
         app.patch('/carts/:id', async (req, res) => {
             const id = req.params.id;
             const cart = req.body
-            console.log(cart)
+            // console.log(cart)
             const filter = { _id: ObjectId(id) };
             const updateDoc = {
                 $set: {
