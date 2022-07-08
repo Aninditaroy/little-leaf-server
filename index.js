@@ -210,9 +210,11 @@ async function run() {
 
 
         // get api for carts
-        app.get('/carts', async (req, res) => {
-            const query = {};
-            const cursor = cartCollection.find(query);
+        app.get('/carts/:email', async (req, res) => {
+            const email = req.params.email;
+            console.log(email)
+            const filter = { email: email };
+            const cursor = cartCollection.find(filter);
             const carts = await cursor.toArray();
             res.send(carts);
         });
