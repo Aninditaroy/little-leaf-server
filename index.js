@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
-
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // middleware
 app.use(cors());
 app.use(function (req, res, next) {
@@ -44,6 +44,7 @@ async function run() {
         const productCollection = client.db('little-leaf').collection('products');
         const cartCollection = client.db('little-leaf').collection('carts');
         const userCollection = client.db('little-leaf').collection('users');
+        const paymentCollection = client.db('little-leaf').collection('payments');
 
 
 
@@ -58,6 +59,19 @@ async function run() {
                 res.status(403).send({ message: 'forbidden' });
             }
         }
+
+        app.post('/create-payment-intent', verifyJWT, async (req, res) => {
+            const cart = req.body;
+            const price = cart.price;
+            const amount = price * 100;
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'usd',
+                payment_method_types: ['card']
+            });
+            res.send({ clientSecret: paymentIntent.client_secret })
+        });
+
 
         //find all admin 
         app.get('/admin/:email', async (req, res) => {
