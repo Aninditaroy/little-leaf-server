@@ -60,18 +60,20 @@ async function run() {
             }
         }
 
-        app.post('/create-payment-intent', verifyJWT, async (req, res) => {
-            const cart = req.body;
-            const price = cart.price;
+        app.post("/create-payment-intent", verifyJWT, async (req, res) => {
+            const order = req.body;
+            const price = order.total;
+            //convet to poysha
             const amount = price * 100;
+
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
-                currency: 'usd',
+                currency: "usd",
                 payment_method_types: ['card']
             });
             res.send({ clientSecret: paymentIntent.client_secret })
-        });
 
+        })
 
         //find all admin 
         app.get('/admin/:email', async (req, res) => {
