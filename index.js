@@ -4,6 +4,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const app = express();
+// const stripe = require("stripe")('sk_test_51L3QUsDxGuRg5LiuRCbjwwYAI3jvEaqfJ5vYgqDyyKkCd0m6ldICRj38Nq5ceDcMghQd0V5G6qesIHlGGzIR4FAh00s3HOavvO');
 const port = process.env.PORT || 5000;
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -62,11 +63,9 @@ async function run() {
         }
 
         app.post("/create-payment-intent", async (req, res) => {
-            const order = req.body;
-            console.log(order)
-            const price = order.total;
-            console.log(price)
-            //convert to poysha
+            const service = req.body;
+            const price = service.price;
+            //convet to poysha
             const amount = price * 100;
 
             const paymentIntent = await stripe.paymentIntents.create({
@@ -75,6 +74,7 @@ async function run() {
                 payment_method_types: ['card']
             });
             res.send({ clientSecret: paymentIntent.client_secret })
+
         })
 
         //find all admin 
@@ -231,7 +231,7 @@ async function run() {
         // get api for carts
         app.get('/carts/:email', async (req, res) => {
             const email = req.params.email;
-            console.log(email)
+            // console.log(email)
             const filter = { email: email };
             const cursor = cartCollection.find(filter);
             const carts = await cursor.toArray();
@@ -246,6 +246,14 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await cartCollection.deleteOne(query);
             res.send(result);
+        })
+
+        ///for stripe test
+        app.get('/cart/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const order = await cartCollection.findOne(query);
+            res.send(order);
         })
 
 
