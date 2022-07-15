@@ -18,7 +18,7 @@ app.use(function (req, res, next) {
 });
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.anvyz.mongodb.net/?retryWrites=true&w=majority;`
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.anvyz.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -236,7 +236,7 @@ async function run() {
             const cursor = cartCollection.find(filter);
             const carts = await cursor.toArray();
             res.send(carts);
-        });
+        })
 
         //cancel or delete cart order
         //http://localhost:5000/carts/:id
