@@ -138,12 +138,40 @@ async function run() {
 
 
         // get api for products
+        // app.get('/product', async (req, res) => {
+        //     console.log('query', req.query)
+        //     const query = {};
+        //     const cursor = productCollection.find(query);
+        //     const products = await cursor.toArray();
+        //     res.send(products);
+        // });
+        // get api for products
         app.get('/product', async (req, res) => {
+            console.log('query', req.query)
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+
             const query = {};
             const cursor = productCollection.find(query);
-            const products = await cursor.toArray();
+            let products
+            if (page || size) {
+                products = await cursor.skip(page * size).limit(size).toArray();
+            }
+            else {
+                products = await cursor.toArray();
+            }
+
             res.send(products);
         });
+
+        //for page count
+
+        app.get('/productCount', async (req, res) => {
+            const count = await productCollection.estimatedDocumentCount();
+            res.send({ count });
+        });
+
+
 
 
         // get api with id for product
