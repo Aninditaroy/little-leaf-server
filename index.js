@@ -46,7 +46,7 @@ async function run() {
         const productCollection = client.db('little-leaf').collection('products');
         const cartCollection = client.db('little-leaf').collection('carts');
         const userCollection = client.db('little-leaf').collection('users');
-        const paymentCollection = client.db('little-leaf').collection('payments');
+        const orderCollection = client.db('little-leaf').collection('orders');
 
 
 
@@ -256,7 +256,12 @@ async function run() {
             res.send(order);
         })
 
-
+        // get all orders
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
 
 
 
