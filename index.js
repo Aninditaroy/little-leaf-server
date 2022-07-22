@@ -81,7 +81,7 @@ async function run() {
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
             const user = await userCollection.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
+            const isAdmin = user?.role === 'admin';
             res.send({ admin: isAdmin })
         })
 
@@ -147,7 +147,7 @@ async function run() {
         // });
         // get api for products
         app.get('/product', async (req, res) => {
-            console.log('query', req.query)
+            // console.log('query', req.query)
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
 
