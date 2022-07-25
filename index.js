@@ -65,7 +65,7 @@ async function run() {
         app.post("/create-payment-intent", async (req, res) => {
             const service = req.body;
             const price = service.price;
-            //convet to poysha
+            //convert to poysha
             const amount = price * 100;
 
             const paymentIntent = await stripe.paymentIntents.create({
