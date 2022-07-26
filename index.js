@@ -4,7 +4,6 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const app = express();
-// const stripe = require("stripe")('sk_test_51L3QUsDxGuRg5LiuRCbjwwYAI3jvEaqfJ5vYgqDyyKkCd0m6ldICRj38Nq5ceDcMghQd0V5G6qesIHlGGzIR4FAh00s3HOavvO');
 const port = process.env.PORT || 5000;
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -47,10 +46,11 @@ async function run() {
         const cartCollection = client.db('little-leaf').collection('carts');
         const userCollection = client.db('little-leaf').collection('users');
         const orderCollection = client.db('little-leaf').collection('orders');
+        const orderItemsCollection = client.db('little-leaf').collection('orderItems');
 
 
 
-        //middletare
+        //middleware
         const verifyAdmin = async (req, res, next) => {
             const requester = req.decoded.email;
             const requesterAccount = await userCollection.findOne({ email: requester });
@@ -284,12 +284,27 @@ async function run() {
             res.send(order);
         })
 
-        // get all orders
+        // remove carts
+        app.delete('/carts', async (req, res) => {
+            const result = await cartCollection.remove({});
+            res.send(result);
+        })
+
+
+        // post paid  orders from  checkout form  
         app.post('/orders', async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
+        // post paid  orders items from  checkout form  
+        app.post('/orderItem', async (req, res) => {
+            const order = req.body;
+            const result = await orderItemsCollection.insertOne(order);
+            res.send(result);
+        })
+
+
 
 
 
