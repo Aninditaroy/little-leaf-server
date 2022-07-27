@@ -291,6 +291,11 @@ async function run() {
         })
 
 
+        // get all  orders from  manageorders 
+        app.get('/orders', async (req, res) => {
+            const users = await orderCollection.find().toArray();
+            res.send(users);
+        })
         // post paid  orders from  checkout form  
         app.post('/orders', async (req, res) => {
             const order = req.body;
@@ -303,6 +308,23 @@ async function run() {
             const result = await orderItemsCollection.insertOne(order);
             res.send(result);
         })
+
+        //manage order shipped property
+        app.put('/manageorder/:id', async (req, res) => {
+            const id = req.params.id;
+            const order = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: { pandingChange: 'shipped' }
+            };
+            const result = await orderCollection.updateOne(filter, updateDoc, options);
+
+            res.send(result)
+
+        })
+
+
 
 
 
