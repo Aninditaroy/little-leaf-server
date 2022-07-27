@@ -220,12 +220,12 @@ async function run() {
             const updateDoc = {
                 $set: {
                     plantName: updatedProduct.plantName,
+                    price: updatedProduct.price,
+                    inStock: updatedProduct.inStock,
+                    description: updatedProduct.description,
                     imageUrl: updatedProduct.imageUrl,
                     imageAlt: updatedProduct.imageAlt,
                     categories: updatedProduct.categories,
-                    inStock: updatedProduct.inStock,
-                    price: updatedProduct.price,
-                    description: updatedProduct.description,
                 },
             };
             const result = await productCollection.updateOne(filter, updateDoc, options);
@@ -309,7 +309,7 @@ async function run() {
             res.send(result);
         })
 
-        //manage order shipped property
+        // manage order shipped property
         app.put('/manageorder/:id', async (req, res) => {
             const id = req.params.id;
             const order = req.body;
@@ -324,8 +324,21 @@ async function run() {
 
         })
 
+        // After successful payment instock updation
+        app.patch('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const product = req.body
+            // console.log(cart)
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    inStock: product.inStock,
+                }
+            };
+            const updatedOrder = await productCollection.updateOne(filter, updateDoc)
+            res.send(updateDoc)
 
-
+        })
 
 
 
