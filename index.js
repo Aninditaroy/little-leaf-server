@@ -316,7 +316,7 @@ async function run() {
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updateDoc = {
-                $set: { pandingChange: 'shipped' }
+                $set: { pendingChange: 'shipped' }
             };
             const result = await orderCollection.updateOne(filter, updateDoc, options);
 
@@ -338,6 +338,24 @@ async function run() {
             const updatedOrder = await productCollection.updateOne(filter, updateDoc)
             res.send(updateDoc)
 
+        })
+
+        //  get api my orders with email for user
+        app.get('/myorders/:email', async (req, res) => {
+            const email = req.params.email;
+            // console.log(email)
+            const filter = { userEmail: email };
+            const orders = await orderCollection.find(filter).toArray();
+            res.send(orders);
+        })
+
+        //  get api my orders with email for user
+        app.get('/myorderitems/:transectionId', async (req, res) => {
+            const reqTransectionId = req.params.transectionId;
+            // console.log(email)
+            const filter = { transectionId: reqTransectionId };
+            const orderItem = await orderItemsCollection.find(filter).toArray();
+            res.send(orderItem);
         })
 
 
