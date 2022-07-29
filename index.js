@@ -46,7 +46,7 @@ async function run() {
         const cartCollection = client.db('little-leaf').collection('carts');
         const userCollection = client.db('little-leaf').collection('users');
         const orderCollection = client.db('little-leaf').collection('orders');
-        const orderItemsCollection = client.db('little-leaf').collection('orderItems');
+        const blogCollection = client.db('little-leaf').collection('blogs');
 
 
 
@@ -358,8 +358,13 @@ async function run() {
             res.send(orderItem);
         })
 
-
-
+        // add new blog by admin
+        app.post('/blogs', verifyJWT, verifyAdmin, async (req, res) => {
+            const blogs = req.body;
+            // console.log(blog)
+            const result = await blogCollection.insertOne(blogs);
+            res.send(result);
+        })
 
     }
     finally {
