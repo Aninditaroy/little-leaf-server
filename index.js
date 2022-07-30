@@ -47,6 +47,7 @@ async function run() {
         const userCollection = client.db('little-leaf').collection('users');
         const orderCollection = client.db('little-leaf').collection('orders');
         const blogCollection = client.db('little-leaf').collection('blogs');
+        const reviewCollection = client.db('little-leaf').collection('reviews');
 
 
 
@@ -378,6 +379,25 @@ async function run() {
             const blog = await blogCollection.findOne(query);
             res.send(blog);
         })
+
+        // add review by user for every product
+        app.post('/reviews', async (req, res) => {
+            const reviews = req.body;
+            const result = await reviewCollection.insertOne(reviews);
+            res.send(result);
+        })
+
+        // get all reviews by user for every product
+        app.get('/review', async (req, res) => {
+            // const reqId = req.params.reviewId;
+            // console.log(reqId)
+            // const filter = { productId: reqId };
+            // const reviews = await reviewCollection.find(filter).toArray();
+            // res.send(reviews);
+            const reviews = await reviewCollection.find().toArray();
+            res.send(reviews);
+        })
+
 
     }
     finally {
