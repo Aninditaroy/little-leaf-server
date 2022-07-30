@@ -366,6 +366,19 @@ async function run() {
             res.send(result);
         })
 
+        // get all blog by admin
+        app.get('/blogs', async (req, res) => {
+            const blogs = await blogCollection.find().toArray();
+            res.send(blogs);
+        })
+        // get api with id for blog
+        app.get('/blog/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const blog = await blogCollection.findOne(query);
+            res.send(blog);
+        })
+
     }
     finally {
 
