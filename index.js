@@ -48,6 +48,7 @@ async function run() {
         const orderCollection = client.db('little-leaf').collection('orders');
         const blogCollection = client.db('little-leaf').collection('blogs');
         const reviewCollection = client.db('little-leaf').collection('reviews');
+        const orderItemsCollection = client.db('little-leaf').collection('orderItems');
 
 
 
