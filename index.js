@@ -294,10 +294,41 @@ async function run() {
 
 
         // get all  orders from  manageorders 
+        // app.get('/orders', async (req, res) => {
+        //     const users = await orderCollection.find().toArray();
+        //     res.send(users);
+        // })
+
+
         app.get('/orders', async (req, res) => {
-            const users = await orderCollection.find().toArray();
-            res.send(users);
+
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+
+            const query = {};
+            const cursor = orderCollection.find(query);
+            let orders
+            if (page || size) {
+                orders = await cursor.skip(page * size).limit(size).toArray();
+            }
+            else {
+                orders = await cursor.toArray();
+            }
+
+            res.send(orders);
+
+            // const users = await orderCollection.find().toArray();
+            // res.send(users);
         })
+
+        //order collection page count
+        app.get('/productCountOrder', async (req, res) => {
+            const count = await orderCollection.estimatedDocumentCount();
+            res.send({ count });
+        });
+
+
+
         // post paid  orders from  checkout form  
         app.post('/orders', async (req, res) => {
             const order = req.body;
